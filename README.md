@@ -2,6 +2,8 @@
 
 `docker run -p <GRPC_PORT>:<GRPC_PORT> -v /path/to/collectd.conf:/etc/collectd.conf:ro celine/collectd-grpc:5.7`
 
+Remember to edit `collectd.conf` with your own values
+
 ### Example in Python sending data with gRPC:
 
  - Install grpc (example: `pip install grpcio==1.1.3 grpcio-tools==1.1.3`)
