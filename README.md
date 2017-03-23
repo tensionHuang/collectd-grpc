@@ -1,6 +1,6 @@
 ### Run docker example: 
 
-`docker run -p <GRPC_PORT>:<GRPC_PORT> -v /path/to/collectd.conf:/etc/collectd.conf:ro celine/collectd-grpc:5.7`
+`docker run -p <GRPC_PORT>:<GRPC_PORT> -v /path/to/collectd.conf:/etc/collectd.conf:ro celine/collectd-grpc:latest`
 
 Remember to edit `collectd.conf` with your own values
 
