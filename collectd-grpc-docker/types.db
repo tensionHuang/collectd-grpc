@@ -1,0 +1,3 @@
+disk_io_time            io_time:DERIVE:0:U, weighted_io_time:DERIVE:0:U
+disk_time               read:DERIVE:0:U, write:DERIVE:0:U
+myType                  type_a:COUNTER:0:U type_b:COUNTER:0:U

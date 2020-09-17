@@ -14,7 +14,7 @@ public class CollectdGrpcServer {
     private final int port;
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        final CollectdGrpcServer server = new CollectdGrpcServer(50052);
+        final CollectdGrpcServer server = new CollectdGrpcServer(50051);
         server.start();
         server.awaitTermination();
     }

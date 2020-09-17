@@ -3,6 +3,7 @@ package io.grpc.examples.collectd;
 import collectd.CollectdGrpc;
 import collectd.CollectdOuterClass;
 import collectd.types.Types;
+import com.google.common.collect.Lists;
 import com.google.protobuf.Timestamp;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -13,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 public class CollectdGrpcClient {
 
     public static void main(String[] args) {
-        CollectdGrpcClient collectdGrpcClient = new CollectdGrpcClient("10.206.84.154", 50052);
+        CollectdGrpcClient collectdGrpcClient = new CollectdGrpcClient("localhost", 50051);
         collectdGrpcClient.putMetrics();
     }
 
@@ -54,20 +55,22 @@ public class CollectdGrpcClient {
 
         StreamObserver<CollectdOuterClass.PutValuesRequest> reqObserver = collectdStub.putValues(responseObserver);
 
-        // Identifier
+        // Identifier example: SCG/disk-sda/disk_io_time
         Types.Identifier identifier = Types.Identifier.newBuilder()
-                .setHost("localhost")
-                .setPlugin("grpc")
-                .setPluginInstance("grpc-test")
-                .setType("counter")
-                .setTypeInstance("metric_test").build();
+                // cp pod id
+                .setHost("7ba1f40a-3f01-4e51-a755-c96c404733aa")
+                .setPlugin("SCG@disk")
+                .setPluginInstance("sda")
+                .setType("disk_io_time")
+                .build();
 
         try {
             int num = 5;
             for (int i = 0; i < num; i++) {
-                Types.Value value = Types.Value.newBuilder().setCounter(i).build();
-                Types.ValueList valueList = Types.ValueList.newBuilder().addDsNames("DataSource" + i)
-                        .addValues(value).setIdentifier(identifier).setTime(Timestamp.newBuilder().setSeconds(startTimestamp).build()).build();
+                Types.Value value1 = Types.Value.newBuilder().setGauge(i).build();
+                Types.Value value2 = Types.Value.newBuilder().setGauge(i * 2).build();
+                Types.ValueList valueList = Types.ValueList.newBuilder().addAllDsNames(Lists.newArrayList("io_time", "weighted_io_time"))
+                        .addValues(value1).addValues(value2).setIdentifier(identifier).setTime(Timestamp.newBuilder().setSeconds(startTimestamp).build()).build();
                 CollectdOuterClass.PutValuesRequest request = CollectdOuterClass.PutValuesRequest.newBuilder().setValueList(valueList).build();
                 reqObserver.onNext(request);
             }
