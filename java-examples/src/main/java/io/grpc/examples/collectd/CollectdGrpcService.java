@@ -25,6 +25,7 @@ public class CollectdGrpcService extends CollectdGrpc.CollectdImplBase {
         public void onNext(CollectdOuterClass.PutValuesRequest request) {
             try {
                 log.info("PutValuesRequest: " + request.toString());
+                responseObserver.onNext(CollectdOuterClass.PutValuesResponse.newBuilder().build());
             } catch (Throwable t) {
                 this.responseObserver.onError(t);
             }
