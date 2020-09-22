@@ -1,0 +1,8 @@
+version: "3.8"
+services:
+    collectd-grpc:
+        image: centos/collectd-grpc:latest
+        ports:
+          - "50051:50051"
+        volumes:
+          - /path/to/collectd.conf:/etc/collectd.conf:ro
