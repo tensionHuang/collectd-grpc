@@ -1,0 +1,1 @@
+`$build -t centos/collect-grpc:test .`
