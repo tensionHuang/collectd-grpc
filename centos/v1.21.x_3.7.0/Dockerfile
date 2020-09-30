@@ -9,7 +9,7 @@ ENV PROTOBUF_VERSION 3.7.0
 #   - wget git => reqired for grpc build
 #   - gcc gcc-c++ make automake autoconf libtool => required for grpc and collectd
 #   - bzip2 => required for collectd
-ENV BUILD_PKGS="wget git bzip2 gcc gcc-c++ make automake autoconf libtool which"
+ENV BUILD_PKGS="wget git bzip2 gcc gcc-c++ make automake autoconf libtool which zlib-devel"
 
 ENV MY_INSTALL_DIR /usr/local
 ENV PATH="$PATH:$MY_INSTALL_DIR/bin"
@@ -26,16 +26,19 @@ RUN mkdir -p $MY_INSTALL_DIR \
     && yum install -y ${BUILD_PKGS} \
     # Install protobuf
     && wget https://github.com/google/protobuf/releases/download/v${PROTOBUF_VERSION}/protobuf-cpp-${PROTOBUF_VERSION}.tar.gz \
+    && rm protobuf-cpp-${PROTOBUF_VERSION}.tar.gz
     && tar xzf protobuf-cpp-${PROTOBUF_VERSION}.tar.gz \
     && cd protobuf-${PROTOBUF_VERSION} \
-    && ./configure \
+    && ./configure --disable-static \
     && make \
     && make install \
     && cd .. \
     # Install grpc and protobuf for Collectd gRPC plugin
     && git clone -b ${GRPC_BR_VERSION} https://github.com/grpc/grpc \
     && cd grpc \
-    && git submodule update --init
+    && git submodule update --init -- third_party/cares \
+    && git submodule update --init -- third_rty/boringssl \
+    && git submodule update --init -- third_party/zlib \
     && make -j$(nproc) \
     && make install \
     && ldconfig \
@@ -55,7 +58,7 @@ RUN mkdir -p $MY_INSTALL_DIR \
          PROTOBUF_CFLAGS="-std=c++11 $(pkg-config --cflags "protobuf")" \
     && make -j"$(nproc)" \
     && make install \
-    && cd .. && rm -rf grpc collectd-${COLLECTD_VERSION} collectd-${COLLECTD_VERSION} \
+    && cd .. && rm -rf grpc collectd-${COLLECTD_VERSION} protobuf-${PROTOBUF_VERSION} \
     && yum remove -y ${BUILD_PKGS} \
     && yum clean all \
     && rm -rf /var/cache/yum
